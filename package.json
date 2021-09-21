@@ -1,0 +1,46 @@
+{
+  "name": "contracts",
+  "version": "1.0.0",
+  "description": "Collection contracts",
+  "repository": {
+    "type": "git"
+  },
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "deploy:ganache": "truffle deploy --network development",
+    "deploy:rinkeby": "truffle deploy --network rinkeby",
+    "start:ganache:dev": "ganache-cli -m \"width whip dream dress captain vessel mix drive oxygen broken soap bone\" -p 8545 -i 201903 --debug",
+    "test": "truffle test",
+    "lint:sol": "solium -d contracts",
+    "lint:js": "eslint *.js .",
+    "lint": "npm run lint:sol && npm run lint:js",
+    "security": "docker run --rm --memory=3g -v $(pwd):/tmp -w \"/tmp/\" mythril/myth --truffle",
+    "describe": "surya describe contracts/*.sol",
+    "coverage": "solidity-coverage"
+  },
+  "keywords": [],
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.1.0",
+    "@truffle/hdwallet-provider": "1.4.2",
+    "bignumber.js": "8.0.2",
+    "openzeppelin-solidity": "^4.0.0",
+    "truffle-assertions": "^0.9.2"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-bignumber": "^3.0.0",
+    "eslint": "^7.25.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eth-gas-reporter": "^0.1.12",
+    "ethlint": "1.2.3",
+    "ganache-cli": "6.3.0",
+    "solidity-coverage": "0.6.0-beta.3",
+    "surya": "0.2.8",
+    "truffle": "^5.3.3",
+    "web3-provider-engine": "^16.0.1"
+  }
+}
