@@ -85,3 +85,5 @@ typings/
 
 bin/
 .vscode/
+
+community-round-addresses.js
