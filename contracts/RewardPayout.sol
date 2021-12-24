@@ -6,8 +6,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-contract RewardPayout is Ownable {
+contract RewardPayout is Ownable, ReentrancyGuard {
   using SafeMath for uint256;
   using SafeERC20 for IERC20;
 
@@ -28,13 +29,12 @@ contract RewardPayout is Ownable {
   // rewards that have been paid to each address
   mapping(address => uint256) public payouts;
 
-  IERC20 orionToken;
+  IERC20 nftdToken;
 
   event RewardPaid(address indexed user, uint256 reward);
-  event RewardUpdated(address indexed account, uint256 amount);
 
-  constructor(address orionToken_, uint256 periodFinish_) {
-    orionToken = IERC20(orionToken_);
+  constructor(address nftdToken_, uint256 periodFinish_) {
+    nftdToken = IERC20(nftdToken_);
     periodStart = block.timestamp;
     periodFinish = periodFinish_;
     _term = periodFinish - periodStart;
@@ -76,9 +76,9 @@ contract RewardPayout is Ownable {
   }
 
   /**
-   * @dev calculates total amounts must be rewarded and transfers ORN to the address
+   * @dev calculates total amounts must be rewarded and transfers NFTD to the address
    */
-  function getReward() public {
+  function getReward() public nonReentrant {
     uint256 _earned = earned(msg.sender);
     require(_earned <= rewards[msg.sender], "RewardPayout: earned is more than reward!");
     require(_earned > payouts[msg.sender], "RewardPayout: earned is less or equal to already paid!");
@@ -87,7 +87,7 @@ contract RewardPayout is Ownable {
 
     if (reward > 0) {
       payouts[msg.sender] = _earned;
-      orionToken.safeTransfer(msg.sender, reward);
+      nftdToken.safeTransfer(msg.sender, reward);
       emit RewardPaid(msg.sender, reward);
     }
   }
