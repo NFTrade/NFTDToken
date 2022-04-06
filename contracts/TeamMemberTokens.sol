@@ -7,6 +7,7 @@ import "openzeppelin-solidity/contracts/access/Ownable.sol";
 
 interface IERC20 {
     function transfer(address recipient, uint256 amount) external returns (bool);
+    function balanceOf(address account) external view returns (uint256);
 }
 
 contract TeamMemberTokens is ReentrancyGuard, Ownable {
@@ -64,5 +65,9 @@ contract TeamMemberTokens is ReentrancyGuard, Ownable {
             totalClaimed = totalClaimed + amountToTransfer;
             IERC20(tokenAddress).transfer(teamMember, amountToTransfer);
         }
+    }
+
+    function emergency() external nonReentrant onlyTeamMember {
+        IERC20(tokenAddress).transfer(Ownable.owner(), IERC20(tokenAddress).balanceOf(address(this)));
     }
 }
