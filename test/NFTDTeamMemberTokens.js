@@ -96,22 +96,44 @@ contract('NFTDTeamTokens', (accounts) => {
       assert.equal(totalClaimed.toString(), balance.toString());
     });
 
-    it('claim all at the end', async () => {
-      await advanceTimeAndBlock(month * 6); // three more months
+    it('claim between cycles', async () => {
+      await advanceTimeAndBlock(month); // one more month
 
       const available = await teamMemberTokens.available();
 
-      const amountExpected = totalAmount.dividedBy(5).multipliedBy(2);
+      assert.equal(available.toString(), 0);
+    });
+
+    it('claim period', async () => {
+      await advanceTimeAndBlock(month * 2); // five more months
+
+      const available = await teamMemberTokens.available();
+
+      const amountExpected = totalAmount.dividedBy(5);
 
       assert.equal(available.toString(), amountExpected.toString());
 
       await teamMemberTokens.withdraw({ from: teamMember });
 
-      const totalClaimed = totalAmount;
+      const totalClaimed = totalAmount.dividedBy(5).multipliedBy(4);
 
       const balance = await token.balanceOf(teamMember);
 
       assert.equal(totalClaimed.toString(), balance.toString());
+    });
+
+    it('emergency withdraw ', async () => {
+      const amountExpected = totalAmount.dividedBy(5);
+
+      const balanceBefore = await token.balanceOf(owner);
+
+      await teamMemberTokens.emergency({ from: teamMember });
+
+      const balanceAfter = await token.balanceOf(owner);
+
+      const calac = balanceAfter.sub(balanceBefore);
+
+      assert.equal(amountExpected.toString(), calac.toString());
     });
   });
 });
